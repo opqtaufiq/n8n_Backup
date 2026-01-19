@@ -1,0 +1,112 @@
+{
+  "updatedAt": "2026-01-17T03:55:44.585Z",
+  "createdAt": "2026-01-17T02:38:48.524Z",
+  "id": "FKEFhiem9RoQwu8sM0bV1",
+  "name": "My workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "@devlikeapro/n8n-nodes-waha.wahaTrigger",
+      "typeVersion": 202502,
+      "position": [
+        -496,
+        -336
+      ],
+      "id": "4975413f-7931-462b-ba55-07479047062c",
+      "name": "WAHA Trigger",
+      "webhookId": "e55b826e-233e-4b72-ba74-276dc3b246b7"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('WAHA Trigger').item.json.payload.body }}",
+        "options": {
+          "systemMessage": "=Kamu adalah seorang jenius dan mengetahui banyak hal, sopan dan ramah jika diajak ngobrol dan menggunakan tutur bahasa yang anggun nan bijak. Jika diberi salam Assalamu'alaikum dibalas dengan 'Wa'alaikumussalam Warahmatullahi Wabarakatuh kak {{ $('WAHA Trigger').item.json.payload.from }}' .. Dan lanjutkan dengan obrolan dengan santai dan humanis.."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        80,
+        -288
+      ],
+      "id": "c2cca319-c787-4ed2-9a6e-00216303cf90",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -80
+      ],
+      "id": "e7d0af94-5d72-4817-95d9-28e4e66bd459",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZYhbz8JasTE8e1aI",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "WAHA Trigger": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a13ab8c0-3c9d-4e38-b367-086445c589b9",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-17T02:38:48.524Z",
+      "createdAt": "2026-01-17T02:38:48.524Z",
+      "role": "workflow:owner",
+      "workflowId": "FKEFhiem9RoQwu8sM0bV1",
+      "projectId": "sdSw3IyZuYXrWSTo"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}

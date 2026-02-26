@@ -1,0 +1,709 @@
+{
+  "updatedAt": "2026-01-20T15:27:34.542Z",
+  "createdAt": "2026-01-12T07:15:37.641Z",
+  "id": "26OzK7MbzWAUmIgp",
+  "name": "Youtube Assistance",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        32
+      ],
+      "id": "19d43282-0f28-4e54-abe3-fac1e03ee4ef",
+      "name": "Telegram Trigger",
+      "webhookId": "e4aa2e51-6615-4318-8cef-abe7feced9d4",
+      "credentials": {
+        "telegramApi": {
+          "id": "N8Gk3EQA0LeJljX5",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/trend",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "b6816119-9de2-4ef6-8b5a-42ef2a37a075"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "8613a0a4-e09b-4875-be07-bb5781e95ba5",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/channel",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3556c6c6-edd9-415b-8054-c7e27576f252",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/summary",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "16a6cfee-41bd-438c-8705-5c198110b220",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "cc45e9ea-fc29-4aa8-8b96-0c8d3d843e19",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "q",
+              "value": "={{ $json.message.text.replace('/trend ', '').replace(/region:[a-zA-Z]{2}\\s*$/i, '').trim() }}"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "order",
+              "value": "relevance"
+            },
+            {
+              "name": "maxResults",
+              "value": "5"
+            },
+            {
+              "name": "regionCode",
+              "value": "={{ (() => {   const messageText = $json.message.text;   const regionMatch = messageText.match(/region:([a-zA-Z]{2})\\s*$/i);    if (regionMatch) {     const inputRegion = regionMatch[1].toLowerCase();     const regionMapping = {       'id': 'ID',       \n  'sa': 'SA',       'us': 'US',       'gb': 'GB',       'uk': 'GB',       'jp': 'JP',       'kr': 'KR',       'au': 'AU',       'ca': 'CA',       'de': 'DE',       'fr': 'FR',       'br': 'BR',       'mx': 'MX',       'in': 'IN',       'th': 'TH',       'my': 'MY',       'sg': 'SG',       'ph': 'PH',       'vn': 'VN'     };      return regionMapping[inputRegion] || 'ID';   }    return 'ID'; })() }}"
+            },
+            {
+              "name": "relevanceLanguage",
+              "value": "en"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyBcIuuIxJCBmW8-UDmqAQFbQLPRc0edXpo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        -320
+      ],
+      "id": "95f9174a-466d-4535-966d-289047c06a67",
+      "name": "Ambil Data Video"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "statistics,snippet"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.items.map(item => item.id.videoId).join(',') }}"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyBcIuuIxJCBmW8-UDmqAQFbQLPRc0edXpo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        656,
+        -320
+      ],
+      "id": "a703224d-fb6b-489c-866d-4f4184daab0c",
+      "name": "Statistik Video"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ (() => {\n  const searchData = $('Ambil Data Video').item.json.items;\n  const statsData = $json.items;\n  const messageText = $('Telegram Trigger').item.json.message.text;\n\n  const keyword = messageText\n    .replace('/trend ', '')\n    .replace(/region:[a-zA-Z]{2}\\s*$/i, '')\n    .trim();\n\n  const regionMatch = messageText.match(/region:([a-zA-Z]{2})\\s*$/i);\n\n  const regionName = regionMatch\n    ? (() => {\n        const inputRegion = regionMatch[1].toLowerCase();\n        const regionNames = {\n          id: 'Indonesia',\n          sa: 'Arab Saudi',\n          us: 'Amerika Serikat',\n          gb: 'Inggris',\n          uk: 'Inggris',\n          jp: 'Jepang',\n          kr: 'Korea Selatan',\n          au: 'Australia',\n          ca: 'Kanada',\n          de: 'Jerman',\n          fr: 'Prancis',\n          br: 'Brasil',\n          mx: 'Meksiko',\n          in: 'India',\n          th: 'Thailand',\n          my: 'Malaysia',\n          sg: 'Singapura',\n          ph: 'Filipina',\n          vn: 'Vietnam'\n        };\n        return regionNames[inputRegion] || 'Global';\n      })()\n    : 'Global';\n\n  function formatNumber(num) {\n    if (!num) return 'N/A';\n    const number = parseInt(num);\n    if (number >= 1000000) return (number / 1000000).toFixed(1) + 'M';\n    if (number >= 1000) return (number / 1000).toFixed(1) + 'K';\n    return number.toLocaleString();\n  }\n\n  function getTimeSince(publishedAt) {\n    const now = new Date();\n    const published = new Date(publishedAt);\n    const diffMs = now - published;\n    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));\n    const diffDays = Math.floor(diffHours / 24);\n    return diffDays > 0 ? `${diffDays} hari yang lalu` : `${diffHours} jam yang lalu`;\n  }\n\n  function calculateVPH(viewCount, publishedAt) {\n    if (!viewCount) return 0;\n    const now = new Date();\n    const published = new Date(publishedAt);\n    const diffHours = (now - published) / (1000 * 60 * 60);\n    return Math.round(parseInt(viewCount) / diffHours);\n  }\n\n  function cleanText(text) {\n    return text.replace(/[*_\\[\\]`]/g, '');\n  }\n\n  const videos = searchData.map(video => {\n    const stats = statsData.find(stat => stat.id === video.id.videoId);\n    return {\n      ...video,\n      statistics: stats ? stats.statistics : {}\n    };\n  });\n\n  let message = `🔥 Trending Videos untuk: ${cleanText(keyword)}\\n`;\n  message += `🌍 Region: ${regionName}\\n\\n`;\n\n  videos.forEach((video, index) => {\n    const title = cleanText(video.snippet.title);\n    const views = formatNumber(video.statistics.viewCount);\n    const likes = formatNumber(video.statistics.likeCount);\n    const comments = formatNumber(video.statistics.commentCount);\n    const channel = cleanText(video.snippet.channelTitle);\n    const timeSince = getTimeSince(video.snippet.publishedAt);\n    const url = 'https://youtu.be/' + video.id.videoId;\n    const vph = formatNumber(calculateVPH(video.statistics.viewCount, video.snippet.publishedAt));\n    const isLive = video.snippet.liveBroadcastContent === 'live' ? '🔴 LIVE' : '';\n\n    message += `${title}\\n`;\n    if (isLive) message += `${isLive}\\n`;\n    message += `👤 ${channel}\\n`;\n    message += `👁️ ${views} views • ⚡ ${vph}/jam\\n`;\n    message += `👍 ${likes} • 💬 ${comments}\\n`;\n    message += `🕒 ${timeSince}\\n`;\n    message += `${url}\\n`;\n    message += index < videos.length - 1 ? '---\\n' : '\\n';\n  });\n\n  message += `📊 Statistik Pencarian:\\n`;\n  message += `🎯 Keyword: ${cleanText(keyword)}\\n`;\n  message += `📈 Total hasil: ${videos.length} video teratas\\n`;\n  message += `⏰ Data diambil: ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}\\n\\n`;\n\n  return message;\n})() }}\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        864,
+        -320
+      ],
+      "id": "2fd4694d-5eea-452c-aed9-69073aefa45e",
+      "name": "Send a text message",
+      "webhookId": "6a90da77-89cb-457d-9dbf-cbc4003489e4",
+      "credentials": {
+        "telegramApi": {
+          "id": "N8Gk3EQA0LeJljX5",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/channels",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet,statistics,brandingSettings"
+            },
+            {
+              "name": "forHandle",
+              "value": "={{ $json.message.text     .replace('/channel ', '')     .replace('https://youtube.com/', '')     .replace('https://www.youtube.com/', '')     .replace('@', '')     .replace('channel/', '')     .replace('c/', '')     .trim() }}"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyBcIuuIxJCBmW8-UDmqAQFbQLPRc0edXpo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        544,
+        -128
+      ],
+      "id": "4374d965-f3d7-432d-aa92-23c325d37c2e",
+      "name": "Ambil Info Channel"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "snippet"
+            },
+            {
+              "name": "channelId",
+              "value": "={{ $json.items[0].id }}"
+            },
+            {
+              "name": "type",
+              "value": "video"
+            },
+            {
+              "name": "order",
+              "value": "date"
+            },
+            {
+              "name": "maxResults",
+              "value": "20"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyBcIuuIxJCBmW8-UDmqAQFbQLPRc0edXpo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        752,
+        -128
+      ],
+      "id": "764ce966-c390-40bf-8b7f-c23cb4074c17",
+      "name": "Ambil Data Video Channel"
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/youtube/v3/videos",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "part",
+              "value": "statistics,snippet"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.items.map(item => item.id.videoId).join(',') }}"
+            },
+            {
+              "name": "key",
+              "value": "AIzaSyBcIuuIxJCBmW8-UDmqAQFbQLPRc0edXpo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -128
+      ],
+      "id": "5abf034c-4d14-4827-bdc1-4c032f712b62",
+      "name": "Statistik Video Channel"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ (() => {\n  try {\n    const channelData = $('Ambil Info Channel').item.json.items?.[0];\n    const videosData = $('Ambil Data Video Channel').item.json.items || [];\n    const statsData = $('Statistik Video Channel').item.json.items || [];\n    const aiResponse = $('Analisis AI').item.json;\n\n    if (!channelData) {\n      return '❌ Error: Data channel tidak ditemukan';\n    }\n\n    function formatNumber(num) {\n      if (!num) return 'N/A';\n      const number = parseInt(num);\n      if (number >= 1_000_000) return (number / 1_000_000).toFixed(1) + 'M';\n      if (number >= 1_000) return (number / 1_000).toFixed(1) + 'K';\n      return number.toLocaleString();\n    }\n\n    function getTimeSince(publishedAt) {\n      const now = new Date();\n      const published = new Date(publishedAt);\n      const diffHours = Math.floor((now - published) / (1000 * 60 * 60));\n      const diffDays = Math.floor(diffHours / 24);\n      return diffDays > 0 ? `${diffDays} hari yang lalu` : `${diffHours} jam yang lalu`;\n    }\n\n    function calculateVPH(viewCount, publishedAt) {\n      if (!viewCount) return 0;\n      const now = new Date();\n      const published = new Date(publishedAt);\n      const diffHours = Math.max(1, (now - published) / (1000 * 60 * 60));\n      return Math.round(parseInt(viewCount) / diffHours);\n    }\n\n    function decode(text) {\n      if (!text) return '';\n      return text\n        .replace(/&amp;/g, '&')\n        .replace(/&lt;/g, '<')\n        .replace(/&gt;/g, '>')\n        .replace(/&quot;/g, '\"')\n        .replace(/&#039;/g, \"'\")\n        .replace(/&nbsp;/g, ' ');\n    }\n\n    const aiText = decode(aiResponse?.candidates?.[0]?.content?.parts?.[0]?.text || 'Tidak tersedia');\n\n    const statsMap = Object.fromEntries(statsData.map(stat => [stat.id, stat.statistics]));\n\n    const videosWithStats = videosData.map(video => ({\n      ...video,\n      statistics: statsMap[video.id.videoId] || {}\n    }));\n\n    const topVideos = [...videosWithStats]\n      .sort((a, b) => parseInt(b.statistics?.viewCount || 0) - parseInt(a.statistics?.viewCount || 0))\n      .slice(0, 3);\n\n    const recentVideos = videosWithStats.slice(0, 5);\n\n    const createdDate = new Date(channelData.snippet?.publishedAt);\n    const avgViews = formatNumber(\n      videosWithStats.reduce((sum, v) => sum + parseInt(v.statistics?.viewCount || 0), 0) / videosWithStats.length || 0\n    );\n\n    let message = '*📊 ANALISIS CHANNEL*\\n\\n';\n    message += `*▶️ ${decode(channelData.snippet?.title || 'Unknown')}*\\n`;\n    message += `👥 ${formatNumber(channelData.statistics?.subscriberCount)} subscribers\\n`;\n    message += `🎬 ${formatNumber(channelData.statistics?.videoCount)} total videos\\n`;\n    message += `👁️ ${formatNumber(channelData.statistics?.viewCount)} total views\\n`;\n    message += `📅 Dibuat: ${createdDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}\\n`;\n    message += `📈 Avg views: ${avgViews}/video\\n\\n`;\n    message += '*🤖 ANALISA AI:*\\n';\n    message += aiText + '\\n\\n';\n    message += '---\\n\\n';\n\n    message += '*🏆 TOP 3 VIDEO TERBAIK:*\\n';\n    topVideos.forEach(v => {\n      const title = decode(v.snippet?.title);\n      const url = `https://youtu.be/${v.id.videoId}`;\n      message += `[${title}](${url})\\n`;\n      message += `👁️ ${formatNumber(v.statistics?.viewCount)} • 👍 ${formatNumber(v.statistics?.likeCount)}\\n\\n`;\n    });\n\n    message += '---\\n\\n';\n    message += '*🎬 5 VIDEO TERBARU:*\\n';\n    recentVideos.forEach(v => {\n      const title = decode(v.snippet?.title);\n      const url = `https://youtu.be/${v.id.videoId}`;\n      const views = formatNumber(v.statistics?.viewCount);\n      const likes = formatNumber(v.statistics?.likeCount);\n      const comments = formatNumber(v.statistics?.commentCount);\n      const vph = formatNumber(calculateVPH(v.statistics?.viewCount, v.snippet?.publishedAt));\n      const since = getTimeSince(v.snippet?.publishedAt);\n\n      message += `[${title}](${url})\\n`;\n      message += `👁️ ${views} • 👍 ${likes} • 💬 ${comments}\\n`;\n      message += `⚡ ${vph}/jam • 🕒 ${since}\\n\\n`;\n    });\n\n    message += '---\\n';\n    message += `⏰ ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })}`;\n\n    return message;\n  } catch (err) {\n    return '❌ Error: Gagal memproses analisis channel.';\n  }\n})() }}\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        -128
+      ],
+      "id": "205834d3-3efc-400d-b113-594ef35160f6",
+      "name": "Send a text message1",
+      "webhookId": "9e9aa4e3-5a08-49c4-a336-f5d57d1cf00f",
+      "credentials": {
+        "telegramApi": {
+          "id": "N8Gk3EQA0LeJljX5",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyCGql3DGDnLcVHu4VmvAqfGX8heByG7mfs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n{\n  \"contents\": [\n    {\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"text\": \n            \"Analisis channel YouTube berikut:\\n\" +\n            \"Nama Channel: \" + $('Ambil Info Channel').item.json.items[0].snippet.title + \"\\n\" +\n            \"Subscribers: \" + $('Ambil Info Channel').item.json.items[0].statistics.subscriberCount + \"\\n\" +\n            \"Total Videos: \" + $('Ambil Info Channel').item.json.items[0].statistics.videoCount + \"\\n\" +\n            \"Total Views: \" + $('Ambil Info Channel').item.json.items[0].statistics.viewCount + \"\\n\" +\n            \"Dibuat: \" + $('Ambil Info Channel').item.json.items[0].snippet.publishedAt + \"\\n\\n\" +\n            \"Video Terbaru:\\n\" +\n            $('Ambil Data Video Channel').item.json.items.slice(0,5).map((v,i) => (i+1) + \". \" + v.snippet.title + \" (\" + v.snippet.publishedAt + \")\").join(\"\\n\") + \n            \"\\n\\nBuat analisis singkat channel ini dalam bahasa Indonesia, maksimal 150 kata, dan gunakan format seperti berikut TANPA karakter khusus, TANPA tanda bintang, TANPA tanda backslash, dan TANPA format markdown apapun. Tulis murni text polos saja.\\n\\n\" +\n            \"Contoh format:\\n\" +\n            \"Niche: ...\\nPerformance: ...\\nTrend: ...\\nRekomendasi: ...\\n\\n\" +\n            \"Ingat: Jangan gunakan tanda **, __, atau \\\\ pada hasil jawaban. Jawaban HARUS polos tanpa markdown.\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"temperature\": 0.7,\n    \"maxOutputTokens\": 65536\n  }\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1168,
+        -128
+      ],
+      "id": "e0bbb17c-6b9e-429b-bed0-8d5b8fc57550",
+      "name": "Analisis AI"
+    },
+    {
+      "parameters": {
+        "url": "https://youtube-transcripts.p.rapidapi.com/youtube/transcript",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json.message.link_preview_options.url }}"
+            },
+            {
+              "name": "videoId",
+              "value": "={{ $json.message.link_preview_options.url.match(/(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/|youtube\\.com\\/embed\\/)([a-zA-Z0-9_-]{11})/)?.[1] }}"
+            },
+            {
+              "name": "chunkSize",
+              "value": "500"
+            },
+            {
+              "name": "text",
+              "value": "false"
+            },
+            {
+              "name": "lang",
+              "value": "id"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-key",
+              "value": "bf6eef6af1msh1ebe3cf8563a9f7p18ad84jsn6adfea7b1757"
+            },
+            {
+              "name": "x-rapidapi-host",
+              "value": "youtube-transcripts.p.rapidapi.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        48
+      ],
+      "id": "076bdeae-7cdf-4779-b6dc-79f52874f64c",
+      "name": "Ambil Transkrip"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content }}",
+        "options": {
+          "systemMessage": "Kamu adalah seorang asisten ahli yang bertugas menganalisis transkrip video YouTube & membantu diskusi tentang video YouTube ini. Saya telah memberikan kamu teks lengkap dari sebuah transkrip. Tugas kamu adalah membantu saya memahami dan meringkas isi video ini.\nGunakan bahasa yang santai.\nLangsung kirimkan ringkasan tanpa pesan pembuka.\n\nJika transkrip tidak ada, maka jawab saja pertanyaan saya.\n\nGunakan format balasan yang support dengan Telegram tanpa ** atau *  atau format penulisan AI lainnya."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        656,
+        160
+      ],
+      "id": "3c70ae8c-faf4-4097-990f-0f825492e904",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        624,
+        384
+      ],
+      "id": "b3aaab6f-a549-4267-bd34-7383bc1d1ff1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZYhbz8JasTE8e1aI",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output.replace('* ','') }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        160
+      ],
+      "id": "9d1359f0-7def-4006-a486-5f19b6354caf",
+      "name": "Send a text message2",
+      "webhookId": "c0550151-55d1-4281-a339-d80add978553",
+      "credentials": {
+        "telegramApi": {
+          "id": "N8Gk3EQA0LeJljX5",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        784,
+        384
+      ],
+      "id": "bf04f8c1-05ea-4e49-b0ea-e7cd05eb7538",
+      "name": "Simple Memory"
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Ambil Data Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ambil Info Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Ambil Transkrip",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Data Video": {
+      "main": [
+        [
+          {
+            "node": "Statistik Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Statistik Video": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Info Channel": {
+      "main": [
+        [
+          {
+            "node": "Ambil Data Video Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Data Video Channel": {
+      "main": [
+        [
+          {
+            "node": "Statistik Video Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Statistik Video Channel": {
+      "main": [
+        [
+          {
+            "node": "Analisis AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisis AI": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ambil Transkrip": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "5601576a-b242-4eff-9abb-9a6b4b01f636",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-12T07:15:37.641Z",
+      "createdAt": "2026-01-12T07:15:37.641Z",
+      "role": "workflow:owner",
+      "workflowId": "26OzK7MbzWAUmIgp",
+      "projectId": "sdSw3IyZuYXrWSTo"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
